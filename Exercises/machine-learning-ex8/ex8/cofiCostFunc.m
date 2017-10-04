@@ -40,20 +40,27 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+regularization_theta = (lambda/2) * sum(sum(power(Theta, 2)));
+regularization_X = (lambda/2) * sum(sum(power(X, 2)));
 
+hyphotesis = X * Theta' - Y;
+J_inner = power(hyphotesis, 2);
 
+J  = (sum(J_inner(R==1)) / 2) + regularization_theta + regularization_X;
 
+for i=1:size(X)
+  idx = R(i,:)==1;
+  hyphotesis = X(i,:) * Theta(idx,:)' - Y(i,idx);
+  regularization = lambda * X(i,:);
+  X_grad(i,:) = hyphotesis * Theta(idx,:) + regularization;
+end
 
-
-
-
-
-
-
-
-
-
-
+for j=1:size(Theta)
+  idx = R(:,j)==1;
+  hyphotesis = X(idx,:) * Theta(j,:)' - Y(idx,j);
+  regularization = lambda * Theta(j,:);
+  Theta_grad(j,:) = hyphotesis' * X(idx,:) + regularization;
+end
 
 % =============================================================
 
